@@ -7,10 +7,10 @@
 #include "util.h"
 #include "validation.h"
 
-bool User_registerUser() {
-    char username[USER_SIZE];
+bool User_register() {
+    char username[USERNAME_SIZE];
     do {
-        printf("Character allowed (A-Z | a-z | 1-9 | a space)\n");
+        printf("Character allowed (A-Z a-z) (1-9) (a space)\n");
         printf("Enter username: ");
         scanf("%[^\n]c", username);
         Util_clearInputBuffer();
@@ -26,7 +26,7 @@ bool User_registerUser() {
 
     char password[PASSWORD_SIZE];
     do {
-        printf("\nPassword must have:\n");
+        printf("\nPassword must have\n");
         printf("_ Minimum length 8\n");
         printf("_ Combination of lowercase, uppercase, and digit.\n");
         printf("_ Symbol is allowed but space is not allowed\n");
@@ -66,17 +66,20 @@ bool User_registerUser() {
 
     fclose(scanner_counterFile);
 
-    FILE *scanner_userFile = fopen(USERS_FILE, "a");
+    FILE *scanner_userFile = NULL;
+    scanner_userFile = fopen(USERS_FILE, "a");
 
     fprintf(scanner_userFile, "\n%s,%s,%s,%s,%s",
-                        newId, username, password, phonenumber, "USER");
+                        newId, username, password, phonenumber, "0");
     fclose(scanner_userFile);
 
     return true;
 }
 
 bool User_isUsernameUnique(char *username) {
-    FILE *scanner = fopen(USERS_FILE, "r");
+    FILE *scanner = NULL;
+    scanner = fopen(USERS_FILE, "r");
+
     if (scanner == NULL) {
         printf("Error: Can't load data\n");
         fclose(scanner);
@@ -119,4 +122,76 @@ bool User_isUsernameUnique(char *username) {
 
     fclose(scanner);
     return isUnique;
+}
+
+int User_login() {
+    char username[USERNAME_SIZE];
+    printf("Enter username: ");
+    scanf("%[^\n]c", username);
+    Util_clearInputBuffer();
+    
+    char password[PASSWORD_SIZE];
+    printf("Enter password: ");
+    scanf("%[^\n]c", password);
+    Util_clearInputBuffer();
+
+    FILE *scanner_userFile = NULL;
+    scanner_userFile = fopen(USERS_FILE, "r");
+
+    bool foundUsername = false;
+    bool isCorrectPassword = false;
+    int role;
+    char line[LINE_SIZE];
+
+    // skip the heading
+    fgets(line, sizeof(line), scanner_userFile);
+    
+    while (fgets(line, sizeof(line), scanner_userFile) != NULL) {
+        line[strcspn(line, "\n")] = 0;
+
+        char tmpLine[LINE_SIZE];
+        strcpy(tmpLine, line);
+
+        char* token;
+        int counter_column = 0;
+
+        token = strtok(tmpLine, ",");
+
+        while (token != NULL) {
+            counter_column++;
+            
+            if (counter_column == 2) {
+                if (strcmp(token, username) == 0) {
+                    foundUsername = true;
+                    
+                    token = strtok(NULL, ",");
+                    if (strcmp(token, password) == 0) {
+                        isCorrectPassword = true;
+
+                        token = strtok(NULL, ",");
+                        token = strtok(NULL, ",");
+                        
+                        role = atoi(token);
+                    }
+
+                    break;
+                }
+            }
+
+            token = strtok(NULL, ",");
+        }
+    }
+
+    fclose(scanner_userFile);
+
+    if (!foundUsername) {
+        printf("Username does not exits.\n");
+        return 0;
+    }
+    else if (!isCorrectPassword) {
+        printf("Incorrect password. Please try again.\n");
+        return 0;
+    }
+
+    return (role == 0) ? 1 : 2;
 }
