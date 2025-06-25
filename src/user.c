@@ -8,7 +8,7 @@
 #include "validation.h"
 
 bool User_register() {
-    char username[USERNAME_SIZE];
+    char username[MAX_USERNAME_LEN];
     do {
         printf("Character allowed (A-Z a-z) (1-9) (a space)\n");
         printf("Enter username: ");
@@ -24,7 +24,7 @@ bool User_register() {
             printf("\nUsername already exist. Please enter another name.\n\n");
     } while (!User_isUsernameUnique(username) || !Validation_isValidUsername(username));
 
-    char password[PASSWORD_SIZE];
+    char password[MAX_PASSWORD_LEN];
     do {
         printf("\nPassword must have\n");
         printf("_ Minimum length 8\n");
@@ -38,7 +38,7 @@ bool User_register() {
             printf("\nInvalid password, Please try again.\n\n");
     } while (!Validation_isValidPassword(password));
 
-    char phonenumber[PHONENUMBER_SIZE];
+    char phonenumber[MAX_PHONENUMBER_LEN];
     do {
         printf("\nPhonenumber should start with 0\n");
         printf("Enter phonenumber: ");
@@ -54,6 +54,11 @@ bool User_register() {
     FILE *scanner_counterFile = NULL;
 
     scanner_counterFile = fopen(USER_COUNTER_FILE, "r");
+    if (scanner_counterFile == NULL) {
+        printf("Error: Cannot load data\n.");
+        fclose(scanner_counterFile);
+        return false;
+    }
 
     fscanf(scanner_counterFile, "%s", previousId);
     sprintf(newId, "U%03d", atoi(previousId) + 1);
@@ -61,6 +66,11 @@ bool User_register() {
     fclose(scanner_counterFile);
 
     scanner_counterFile = fopen(USER_COUNTER_FILE, "w");
+    if (scanner_counterFile == NULL) {
+        printf("Error: Cannot load data\n.");
+        fclose(scanner_counterFile);
+        return false;
+    }
 
     fprintf(scanner_counterFile, "%d", atoi(previousId) + 1);
 
@@ -68,6 +78,11 @@ bool User_register() {
 
     FILE *scanner_userFile = NULL;
     scanner_userFile = fopen(USERS_FILE, "a");
+    if (scanner_userFile == NULL) {
+        printf("Error: Cannot load data\n.");
+        fclose(scanner_userFile);
+        return false;
+    }
 
     fprintf(scanner_userFile, "\n%s,%s,%s,%s,%s",
                         newId, username, password, phonenumber, "0");
@@ -81,13 +96,13 @@ bool User_isUsernameUnique(char *username) {
     scanner = fopen(USERS_FILE, "r");
 
     if (scanner == NULL) {
-        printf("Error: Can't load data\n");
+        printf("Error: Cannot load data\n");
         fclose(scanner);
         return false;
     }
 
     // buffer for storing each line in the file
-    char line[LINE_SIZE];
+    char line[MAX_LINE_LEN];
 
     // skip header line
     fgets(line, sizeof(line), scanner);
@@ -96,7 +111,7 @@ bool User_isUsernameUnique(char *username) {
     while (fgets(line, sizeof(line), scanner) != NULL) {
         line[strcspn(line, "\n")] = 0;
 
-        char tmpLine[LINE_SIZE];
+        char tmpLine[MAX_LINE_LEN];
         strcpy(tmpLine, line);
 
         char* token;
@@ -125,23 +140,29 @@ bool User_isUsernameUnique(char *username) {
 }
 
 int User_login() {
-    char username[USERNAME_SIZE];
+    char username[MAX_USERNAME_LEN];
     printf("Enter username: ");
     scanf("%[^\n]c", username);
     Util_clearInputBuffer();
     
-    char password[PASSWORD_SIZE];
+    char password[MAX_PASSWORD_LEN];
     printf("Enter password: ");
     scanf("%[^\n]c", password);
     Util_clearInputBuffer();
 
     FILE *scanner_userFile = NULL;
     scanner_userFile = fopen(USERS_FILE, "r");
+    if (scanner_userFile == NULL) {
+        printf("Error: Cannot load data\n.");
+        fclose(scanner_userFile);
+        return false;
+    }
+    
 
     bool foundUsername = false;
     bool isCorrectPassword = false;
     int role;
-    char line[LINE_SIZE];
+    char line[MAX_LINE_LEN];
 
     // skip the heading
     fgets(line, sizeof(line), scanner_userFile);
@@ -149,7 +170,7 @@ int User_login() {
     while (fgets(line, sizeof(line), scanner_userFile) != NULL) {
         line[strcspn(line, "\n")] = 0;
 
-        char tmpLine[LINE_SIZE];
+        char tmpLine[MAX_LINE_LEN];
         strcpy(tmpLine, line);
 
         char* token;
