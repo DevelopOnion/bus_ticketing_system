@@ -1,1 +1,1 @@
-BusID,Route,Date,Time,TotalSeats,AvailableSeats
+BusID,BusName,Route,DepartureTime,TotalSeats

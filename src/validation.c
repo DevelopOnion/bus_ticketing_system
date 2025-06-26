@@ -1,7 +1,3 @@
-#include <stdbool.h>
-#include <ctype.h>
-#include <string.h>
-
 #include "validation.h"
 
 bool Validation_isValidUsername(char *username) {
@@ -41,4 +37,11 @@ bool Validation_isValidPassword(char *password) {
     }
 
     return hasUpper && hasLower && hasDigit;
+}
+
+int IsValidTimeFormat(const char *timeStr) {
+    int hh, mm;
+    return sscanf(timeStr, "%d:%d", &hh, &mm) == 2 
+    && hh >= 0 && hh < 24 && mm >= 0 && mm < 60;
+
 }

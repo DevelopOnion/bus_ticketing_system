@@ -1,6 +1,11 @@
 #ifndef VALIDATION_H
 #define VALIDATION_H
 
+#include <stdbool.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdio.h>
+
 /**
  * Description: check if password meet the requirement to not
  * Paramater: pointer to character array

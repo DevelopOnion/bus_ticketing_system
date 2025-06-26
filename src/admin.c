@@ -12,22 +12,23 @@ void showAdminMenu() {
         scanf("%d, &option");
         Util_clearInputBuffer();
 
-        switch (option) {
-            case 1:
-                manageBuses();
-                break;
-            case 2:
-                viewAllBookings();
-                break;
-            case 3:
-                adminLogout();
-                break;
-            default:
-                printf("Invalid option.\n");
-        }
+        // switch (option) {
+        //     case 1:
+        //         manageBuses();
+        //         break;
+        //     case 2:
+        //         viewAllBookings();
+        //         break;
+        //     case 3:
+        //         adminLogout();
+        //         break;
+        //     default:
+        //         printf("Invalid option.\n");
+        // }
+        option = 3;
 
     } while (option != 3);
-}
+}   
 
 void manageBuses() {
     /* 
