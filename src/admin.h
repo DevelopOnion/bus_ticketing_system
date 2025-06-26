@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #define BOOKING_FILE "../data/bookings.csv"
 

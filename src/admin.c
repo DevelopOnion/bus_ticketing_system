@@ -30,7 +30,7 @@ void Admin_showAdminMenu() {
         }
 
     } while (option != 3);
-}
+}   
 
 void Admin_manageBuses() {
     return;
