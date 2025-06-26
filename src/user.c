@@ -1,56 +1,50 @@
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <stdlib.h>
-
 #include "user.h"
 #include "util.h"
 #include "validation.h"
 
 bool User_register() {
-    char username[MAX_USERNAME_LEN];
+    User newUser;
     do {
         printf("Character allowed (A-Z a-z) (1-9) (a space)\n");
         printf("Enter username: ");
-        scanf("%[^\n]c", username);
+        scanf("%[^\n]c", newUser.username);
         Util_clearInputBuffer();
 
-        if (!Validation_isValidUsername(username)) {
+        if (!Validation_isValidUsername(newUser.username)) {
             printf("\nInvalid username. Please try again\n\n");
             continue;
         }
 
-        if (!User_isUsernameUnique(username))
+        if (!User_isUsernameUnique(newUser.username)) {
             printf("\nUsername already exist. Please enter another name.\n\n");
-    } while (!User_isUsernameUnique(username) || !Validation_isValidUsername(username));
+        }
+           
+    } while (!User_isUsernameUnique(newUser.username) || !Validation_isValidUsername(newUser.username));
 
-    char password[MAX_PASSWORD_LEN];
     do {
         printf("\nPassword must have\n");
         printf("_ Minimum length 8\n");
         printf("_ Combination of lowercase, uppercase, and digit.\n");
         printf("_ Symbol is allowed but space is not allowed\n");
         printf("Enter Password: ");
-        scanf("%[^\n]c", password);
+        scanf("%[^\n]c", newUser.password);
         Util_clearInputBuffer();
 
-        if (!Validation_isValidPassword(password)) 
+        if (!Validation_isValidPassword(newUser.password)) 
             printf("\nInvalid password, Please try again.\n\n");
-    } while (!Validation_isValidPassword(password));
+    } while (!Validation_isValidPassword(newUser.password));
 
-    char phonenumber[MAX_PHONENUMBER_LEN];
     do {
         printf("\nPhonenumber should start with 0\n");
         printf("Enter phonenumber: ");
-        scanf("%[^\n]c", phonenumber);
+        scanf("%[^\n]c", newUser.phoneNumber);
         Util_clearInputBuffer();
 
-        if (!Validation_isValidPhonenumber(phonenumber))
+        if (!Validation_isValidPhonenumber(newUser.phoneNumber))
             printf("\nInvalid phonenumber. Please try again.\n\n");
-    } while (!Validation_isValidPhonenumber(phonenumber));
+    } while (!Validation_isValidPhonenumber(newUser.phoneNumber));
 
-    char previousId[5];
-    char newId[5];
+    char previousId[MAX_ID_LEN];
     FILE *scanner_counterFile = NULL;
 
     scanner_counterFile = fopen(USER_COUNTER_FILE, "r");
@@ -61,7 +55,7 @@ bool User_register() {
     }
 
     fscanf(scanner_counterFile, "%s", previousId);
-    sprintf(newId, "U%03d", atoi(previousId) + 1);
+    sprintf(newUser.userID, "U%03d", atoi(previousId) + 1);
 
     fclose(scanner_counterFile);
 
@@ -84,10 +78,10 @@ bool User_register() {
         return false;
     }
 
-    fprintf(scanner_userFile, "\n%s,%s,%s,%s,%s",
-                        newId, username, password, phonenumber, "0");
+    fprintf(scanner_userFile, "\n%s,%s,%s,%s,%s", newUser.userID, newUser.username, newUser.password, newUser.phoneNumber, "0");
     fclose(scanner_userFile);
 
+    printf("New user added sucessfully.\n");
     return true;
 }
 
@@ -127,7 +121,7 @@ bool User_isUsernameUnique(char *username) {
                     isUnique = false;
                 break;
             }
-
+            
             token = strtok(NULL, ",");
         }
 

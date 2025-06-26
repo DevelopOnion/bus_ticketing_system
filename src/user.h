@@ -1,12 +1,16 @@
 #ifndef USER_H
 #define USER_H
 
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
 #include <stdbool.h>
 
 #define USERS_FILE "../data/users.csv"
 #define USER_COUNTER_FILE "../data/user_counter.txt"
 #define MAX_LINE_LEN 512
-#define MAX_ID_LEN 5
+#define MAX_ID_LEN 8
 #define MAX_USERNAME_LEN 64
 #define MAX_PASSWORD_LEN 64
 #define MAX_PHONENUMBER_LEN 32
