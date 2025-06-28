@@ -87,3 +87,48 @@ bool Bus_addBus() {
     return true;
 }
 
+//View all buses
+bool Bus_viewBuses() {
+    printf("\n========== ALL BUSES ==========\n");
+    FILE *scanner_busesFile = fopen(BUSES_FILE, "r");
+    if (scanner_busesFile == NULL) {
+        printf("Error: Cannot load data.\n");
+        return false;
+    }
+
+    char line[MAX_LINE_LEN];
+    bool hasBuses = false;
+
+    // skip heading line
+    fgets(line, sizeof(line), scanner_busesFile);
+
+    while (fgets(line, sizeof(line), scanner_busesFile)) {
+        hasBuses = true;
+        char busID[MAX_ID_LEN], name[MAX_NAME_LEN], origin[MAX_ORIGIN_LEN], 
+             destination[MAX_DESTINATION_LEN], departureTime[MAX_DEPARTURE_TIME_LEN];
+        int totalSeats;
+
+        sscanf(line, "\n%s,%s,%s-%s,%s,%d", 
+               busID, name, origin, destination, departureTime, &totalSeats);
+
+        printf("Bus ID: %s\n", busID);
+        printf("Name: %s\n", name);
+        printf("Origin: %s\n", origin);
+        printf("Destination: %s\n", destination);
+        printf("Departure Time: %s\n", departureTime);
+        printf("Total Seats: %d\n", totalSeats);
+        printf("-----------------------------\n");
+    }
+
+    fclose(scanner_busesFile);
+
+    if (!hasBuses) {
+        printf("No buses available.\n");
+    }
+
+    return true;
+}
+
+    
+
+
