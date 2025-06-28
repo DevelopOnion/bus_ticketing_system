@@ -210,3 +210,16 @@ int User_login() {
 
     return (role == 0) ? 1 : 2;
 }
+
+void showBusSearchMenu() {
+    char origin[MAX_LOCATION_LEN];
+    char destination[MAX_LOCATION_LEN];
+
+    printf("Departing from: ");
+    scanf("%[^\n]c", origin);
+    Util_clearInputBuffer();
+
+    printf("Going to: ");
+    scanf("%[^\n]c", destination);
+    Util_clearInputBuffer();
+}

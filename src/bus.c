@@ -55,7 +55,7 @@ bool Bus_addBus() {
     
 
     do {
-        printf("Enter Departure Time (HH:MM): ");
+        printf("Enter Departure Time (HH:MM)24 hours format: ");
         scanf("%s", newBus.departureTime);
 
         if (!Validation_isValidTimeFormat(newBus.departureTime)) {
@@ -74,7 +74,7 @@ bool Bus_addBus() {
     } while (Validation_isValidSeats(newBus.totalSeats) == false);
     
 
-    char route[MAX_ORIGIN_LEN + MAX_DESTINATION_LEN + 2];
+    char route[MAX_LOCATION_LEN * 2 + 2];
     sprintf(route, "%s-%s", newBus.origin, newBus.destination);
 
     fprintf(scanner_busesFile, "\n%s,%s,%s,%s,%d", 

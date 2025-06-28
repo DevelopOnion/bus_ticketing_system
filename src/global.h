@@ -8,8 +8,7 @@
 #define USERS_COUNTER_FILE "../data/user_counter.txt"
 
 #define MAX_ID_LEN 8
-#define MAX_ORIGIN_LEN 64
-#define MAX_DESTINATION_LEN 64
+#define MAX_LOCATION_LEN 64
 #define MAX_DEPARTURE_TIME_LEN 8
 #define MAX_LINE_LEN 512
 #define MAX_NAME_LEN 64

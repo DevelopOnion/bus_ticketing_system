@@ -44,4 +44,6 @@ bool User_isUsernameUnique(char *username);
  */
 int User_login();
 
+void showBusSearchMenu();
+
 #endif

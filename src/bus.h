@@ -12,8 +12,8 @@
 typedef struct Bus {
     char busID[MAX_ID_LEN];
     char name[MAX_NAME_LEN];
-    char origin[MAX_ORIGIN_LEN];
-    char destination[MAX_DESTINATION_LEN];
+    char origin[MAX_LOCATION_LEN];
+    char destination[MAX_LOCATION_LEN];
     char departureTime[MAX_DEPARTURE_TIME_LEN];
     int totalSeats;
 } Bus;
