@@ -21,7 +21,7 @@ typedef struct Bus {
 bool Bus_addBus();
 bool Bus_editBus();  
 bool Bus_deleteBus();
-bool Bus_viewBuses();
+void Bus_viewBuses();
 
 int Bus_loadBuses(Bus buses[], int max);
 int Bus_saveAllBuses(Bus buses[], int count);
