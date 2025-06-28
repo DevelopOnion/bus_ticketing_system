@@ -107,7 +107,7 @@ void Bus_viewBuses() {
              destination[MAX_LOCATION_LEN], departureTime[MAX_DEPARTURE_TIME_LEN];
         int totalSeats;
 
-        sscanf(line, "\n%s,%s,%s-%s,%s,%d", 
+        sscanf(line, "%[^,],%[^,],%[^-]-%[^,],%[^,],%d", 
             busID, name, origin, destination, departureTime, &totalSeats);
 
         printf("\nBus ID: %s\n", busID);

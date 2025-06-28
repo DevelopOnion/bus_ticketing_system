@@ -43,45 +43,27 @@ void Admin_viewAllBookings() {
     }
 
     char line[MAX_LINE_LEN];
-    int counter_booking = 0;
+    bool hasBookings = false;
 
     // skip heading line
     fgets(line, sizeof(line), scanner_bookingsFile);
 
     while (fgets(line, sizeof(line), scanner_bookingsFile) != NULL) {
-        line[strcspn(line, "\n")] = 0;
+        hasBookings = true;
+        char bookingID[MAX_ID_LEN], userID[MAX_ID_LEN], busID[MAX_ID_LEN],
+             seatNumber[MAX_ID_LEN], passengerName[MAX_NAME_LEN], date[MAX_DATE_LEN],
+             contact[MAX_PHONENUMBER_LEN];
 
-        counter_booking++;
-        printf("\nBooking %d\n", counter_booking);
+        sscanf(line, "\n%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%s", 
+               bookingID, userID, busID, seatNumber, passengerName, contact, date);
 
-        char tmpLine[MAX_LINE_LEN];
-        strcpy(tmpLine, line);
-        
-        char* token;
-
-        token = strtok(tmpLine, ",");
-        printf("Booking ID: %s\n", token);
-        
-        char userID[8];
-        token = strtok(NULL, ",");
-        strcpy(userID, token);
-
-        token = strtok(NULL, ",");
-        printf("Bus ID: %s\n", token);
-
-        token = strtok(NULL, ",");
-        printf("Seat Number: %s\n", token);
-
-        token = strtok(NULL, ",");
-        printf("Passenger Name: %s\n", token);
-
-        token = strtok(NULL, ",");
-        printf("Phone Number: %s\n", token);
-
-        token = strtok(NULL, ",");
-        printf("Booking Date: %s\n", token);
-
-        token = strtok(NULL, ",");
+        printf("\nBooking ID: %s\n", bookingID);
+        printf("User ID: %s\n", userID);
+        printf("Bus ID: %s\n", busID);
+        printf("Seat Number: %s\n", seatNumber);
+        printf("Passenger Name: %s\n", passengerName);
+        printf("Contact: %s\n", contact);
+        printf("Departure Date: %s\n", date);
     }
 }
 

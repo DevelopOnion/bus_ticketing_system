@@ -14,5 +14,6 @@
 #define MAX_NAME_LEN 64
 #define MAX_PASSWORD_LEN 64
 #define MAX_PHONENUMBER_LEN 32
+#define MAX_DATE_LEN 16
 
 #endif
