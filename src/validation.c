@@ -1,6 +1,6 @@
 #include "validation.h"
 
-bool Validation_isValidUsername(char *username) {
+bool Validation_isValidUsername(const char *username) {
     int counter_space = 0;
     for (int i = 0; i < strlen(username); i++) {
         char c = username[i];
@@ -11,7 +11,7 @@ bool Validation_isValidUsername(char *username) {
     return true;
 }
 
-bool Validation_isValidPhonenumber(char *phonenumber) {
+bool Validation_isValidPhonenumber(const char *phonenumber) {
     if (phonenumber[0] != '0' || strlen(phonenumber) < 9) return false;
     for (int i = 0; i < strlen(phonenumber); i++) {
         if (!isdigit(phonenumber[i])) return false;
@@ -19,7 +19,7 @@ bool Validation_isValidPhonenumber(char *phonenumber) {
     return true;
 }
 
-bool Validation_isValidPassword(char *password) {
+bool Validation_isValidPassword(const char *password) {
     // verify length
     int len = strlen(password);
     if (len < 8) return false;
@@ -39,9 +39,19 @@ bool Validation_isValidPassword(char *password) {
     return hasUpper && hasLower && hasDigit;
 }
 
-int IsValidTimeFormat(const char *timeStr) {
+bool Validation_isValidTimeFormat(const char *timeStr) {
     int hh, mm;
     return sscanf(timeStr, "%d:%d", &hh, &mm) == 2 
-    && hh >= 0 && hh < 24 && mm >= 0 && mm < 60;
+           && hh >= 0 && hh < 24 && mm >= 0 && mm < 60;
+}
 
+bool Validation_isValidRoute(const char *destination, const char *origin) {
+    return strcmp(destination, origin) != 0 
+           && strlen(destination) > 0 
+           && strlen(origin) > 0;
+}
+
+
+bool Validation_isValidSeats(int totalSeats) {
+    return totalSeats > 0;
 }

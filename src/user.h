@@ -7,18 +7,12 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define USERS_FILE "../data/users.csv"
-#define USER_COUNTER_FILE "../data/user_counter.txt"
-#define MAX_LINE_LEN 512
-#define MAX_ID_LEN 8
-#define MAX_USERNAME_LEN 64
-#define MAX_PASSWORD_LEN 64
-#define MAX_PHONENUMBER_LEN 32
+#include "global.h"
 
 // user struct
 typedef struct User {
     char userID[MAX_ID_LEN];
-    char username[MAX_USERNAME_LEN];
+    char username[MAX_NAME_LEN];
     char password[MAX_PASSWORD_LEN];
     char phoneNumber[MAX_PHONENUMBER_LEN];
     int role;

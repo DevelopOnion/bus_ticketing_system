@@ -1,9 +1,10 @@
 #include "bus.h"
 #include "validation.h"
+#include "util.h"
 
-bool Admin_addBus() {
+bool Bus_addBus() {
     Bus newBus;
-    // Generate a new bus ID
+    
     FILE *scanner_counterFile = fopen(BUSES_COUNTER_FILE, "r");
     if (scanner_counterFile == NULL) {
         printf("Error: Cannot load data.\n");
@@ -34,15 +35,45 @@ bool Admin_addBus() {
     }
     
     printf("Enter Bus Name: ");
-    scanf("%s", newBus.name);
-    printf("Enter Origin: ");
-    scanf("%s", newBus.origin);
-    printf("Enter Destination: ");
-    scanf("%s", newBus.destination);
-    printf("Enter Departure Time (HH:MM): ");
-    scanf("%s", newBus.departureTime);
-    printf("Enter Total Seats: ");
-    scanf("%d", &newBus.totalSeats);
+    scanf("%[^\n]c", newBus.name);
+    Util_clearInputBuffer();
+
+    do {
+        printf("Enter Origin: ");
+        scanf("%[^\n]c", newBus.origin);
+        Util_clearInputBuffer();
+
+        printf("Enter Destination: ");
+        scanf("%[^\n]c", newBus.destination);
+        Util_clearInputBuffer();
+
+        if (!Validation_isValidRoute(newBus.destination, newBus.origin)) {
+            printf("Invalid route. It must me different and not empty\n");
+        }
+
+    } while (!Validation_isValidRoute(newBus.destination, newBus.origin));
+    
+
+    do {
+        printf("Enter Departure Time (HH:MM): ");
+        scanf("%s", newBus.departureTime);
+
+        if (!Validation_isValidTimeFormat(newBus.departureTime)) {
+            printf("Invalid time format. Please use HH:MM format.\n");
+        }
+    } while (!Validation_isValidTimeFormat(newBus.departureTime));
+
+    do {
+        printf("Enter Total Seats: ");
+        scanf("%d", &newBus.totalSeats);
+        Util_clearInputBuffer();
+
+        if (Validation_isValidSeats(newBus.totalSeats) == false) {
+            printf("Invalid number of seats. It must be a positive integer.\n");
+        }
+    } while (Validation_isValidSeats(newBus.totalSeats) == false);
+    
+
     char route[MAX_ORIGIN_LEN + MAX_DESTINATION_LEN + 2];
     sprintf(route, "%s-%s", newBus.origin, newBus.destination);
 
@@ -52,6 +83,7 @@ bool Admin_addBus() {
 
     fclose(scanner_busesFile);
     printf("New bus added successfully.\n");
+
     return true;
 }
 

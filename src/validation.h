@@ -12,7 +12,7 @@
  * Return: (bool) true - if valid
  *                false - if invalid
  */
-bool Validation_isValidPassword(char *password);
+bool Validation_isValidPassword(const char *password);
 
 /**
  * Description: check if Username meet the requirement to not
@@ -20,7 +20,7 @@ bool Validation_isValidPassword(char *password);
  * Return: (bool) true - if valid
  *                false - if invalid
  */
-bool Validation_isValidUsername(char *username);
+bool Validation_isValidUsername(const char *username);
 
 /**
  * Description: check if phonenumber meet the requirement to not
@@ -28,6 +28,10 @@ bool Validation_isValidUsername(char *username);
  * Return: (bool) true - if valid
  *                false - if invalid
  */
-bool Validation_isValidPhonenumber(char *phonenumber);
+
+bool Validation_isValidSeats(int totalSeats);
+bool Validation_isValidPhonenumber(const char *phonenumber);
+bool Validation_isValidTimeFormat(const char *timeStr);
+bool Validation_isValidRoute(const char *destination, const char *origin);
 
 #endif

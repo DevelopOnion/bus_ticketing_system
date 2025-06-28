@@ -47,7 +47,7 @@ bool User_register() {
     char previousId[MAX_ID_LEN];
     FILE *scanner_counterFile = NULL;
 
-    scanner_counterFile = fopen(USER_COUNTER_FILE, "r");
+    scanner_counterFile = fopen(USERS_COUNTER_FILE, "r");
     if (scanner_counterFile == NULL) {
         printf("Error: Cannot load data\n.");
         fclose(scanner_counterFile);
@@ -59,7 +59,7 @@ bool User_register() {
 
     fclose(scanner_counterFile);
 
-    scanner_counterFile = fopen(USER_COUNTER_FILE, "w");
+    scanner_counterFile = fopen(USERS_COUNTER_FILE, "w");
     if (scanner_counterFile == NULL) {
         printf("Error: Cannot load data\n.");
         fclose(scanner_counterFile);
@@ -134,7 +134,7 @@ bool User_isUsernameUnique(char *username) {
 }
 
 int User_login() {
-    char username[MAX_USERNAME_LEN];
+    char username[MAX_NAME_LEN];
     printf("Enter username: ");
     scanf("%[^\n]c", username);
     Util_clearInputBuffer();

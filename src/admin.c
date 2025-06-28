@@ -1,9 +1,6 @@
 #include "admin.h"
 #include "util.h"
 
-#define MAX_LINE_LEN 512
-#define MAX_ID_LEN 8
-
 void Admin_showAdminMenu() {
     int option;
     do {
