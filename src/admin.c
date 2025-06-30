@@ -1,13 +1,16 @@
 #include "admin.h"
 #include "util.h"
+#include "global.h"
+#include "bus.h"
 
-void Admin_showAdminMenu() {
+void Admin_showAdminMenu(User *currentUser) {
     int option;
     do {
-        printf("Admin menu:\n");
+        printf("\nAdmin menu:\n");
         printf("1. Manage buses\n");
         printf("2. View all booking\n");
         printf("3. Log out\n");
+        printf("4. Exit\n");
         printf("Enter option: ");
         scanf("%d", &option);
         Util_clearInputBuffer();
@@ -20,13 +23,15 @@ void Admin_showAdminMenu() {
                 Admin_viewAllBookings();
                 break;
             case 3:
-                Admin_Logout();
-                break;
+                Admin_Logout(currentUser);
+                return;
+            case 4:
+                Util_exitProgram();  
             default:
                 printf("Invalid option.\n");
         }
 
-    } while (option != 3);
+    } while (option != 3 && option != 4);
 }   
 
 void Admin_manageBuses() {
@@ -36,10 +41,10 @@ void Admin_manageBuses() {
 void Admin_viewAllBookings() {
     printf("\n========== ALL BOOKING ==========\n");
 
-    FILE *scanner_bookingsFile = NULL;
-    scanner_bookingsFile = fopen(BOOKING_FILE, "r");
+    FILE *scanner_bookingsFile = fopen(BOOKING_FILE, "r");
     if (scanner_bookingsFile == NULL) {
         printf("Error: Cannot open file\n");
+        return;
     }
 
     char line[MAX_LINE_LEN];
@@ -54,8 +59,12 @@ void Admin_viewAllBookings() {
              seatNumber[MAX_ID_LEN], passengerName[MAX_NAME_LEN], date[MAX_DATE_LEN],
              contact[MAX_PHONENUMBER_LEN];
 
-        sscanf(line, "\n%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%s", 
+        int parsed = sscanf(line, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,\n]", 
                bookingID, userID, busID, seatNumber, passengerName, contact, date);
+        if (parsed != 7) {
+            printf("Warning: Could not parse booking info: %s\n", line);
+            continue;
+        }
 
         printf("\nBooking ID: %s\n", bookingID);
         printf("User ID: %s\n", userID);
@@ -65,8 +74,17 @@ void Admin_viewAllBookings() {
         printf("Contact: %s\n", contact);
         printf("Departure Date: %s\n", date);
     }
+
+    fclose(scanner_bookingsFile);
+
+    if (!hasBookings) {
+        printf("No bookings found.\n");
+    }
 }
 
-void Admin_Logout() {
-    printf("\nLogging out...\n");
+void Admin_Logout(User *currentUser) {
+    printf("Logging out...\n");
+    if (currentUser) {
+        currentUser->userID[0] = '\0'; // Mark as logged out
+    }
 }

@@ -18,32 +18,11 @@ typedef struct User {
     int role;
 } User;
 
-/**
- * Description: register user to database
- * Paramater: None
- * Return: true - if successfull
- *         false - if failed 
- */
-bool User_register(); 
-
-/**
- * Description: helper function to register that
- *              check to see if any username already exist in database
- * Paramater: pointer to character array
- * Return: (bool) true - if successfull
- *                false - if failed 
- */
+User User_register(); 
 bool User_isUsernameUnique(char *username);
-
-/**
- * Description: login process for both admin or user
- * Paramater: None
- * Return: int 1 - login user sucessfully
- *             2 - login admin sucessfully
- *             0 - login failed
- */
-int User_login();
-
-void showBusSearchMenu();
+User User_login();
+void User_showUserMenu(User *currentUser);
+void User_logout(User *currentUser);
+void User_showAvailableBuses();
 
 #endif

@@ -107,8 +107,12 @@ void Bus_viewBuses() {
              destination[MAX_LOCATION_LEN], departureTime[MAX_DEPARTURE_TIME_LEN];
         int totalSeats;
 
-        sscanf(line, "%[^,],%[^,],%[^-]-%[^,],%[^,],%d", 
+        int parsed = sscanf(line, "%[^,],%[^,],%[^-]-%[^,],%[^,],%d", 
             busID, name, origin, destination, departureTime, &totalSeats);
+        if (parsed != 6) {
+            printf("Warning: Could not parse bus info: %s\n", line);
+            continue;
+        }
 
         printf("\nBus ID: %s\n", busID);
         printf("Name: %s\n", name);
@@ -125,5 +129,32 @@ void Bus_viewBuses() {
     }
 }
 
+bool Bus_loadBuses(Bus buses[], int max) {
+    FILE *scanner_busesFile = fopen(BUSES_FILE, "r");
+    if (scanner_busesFile == NULL) {
+        printf("Error: Cannot load data.\n");
+        return false;
+    }
 
+    char line[MAX_LINE_LEN];
+    int count = 0;
+
+    // skip heading line
+    fgets(line, sizeof(line), scanner_busesFile);
+
+    while (fgets(line, sizeof(line), scanner_busesFile) && count < max) {
+        int parsed = sscanf(line, "%[^,],%[^,],%[^-]-%[^,],%[^,],%d", 
+               buses[count].busID, buses[count].name, 
+               buses[count].origin, buses[count].destination, 
+               buses[count].departureTime, &buses[count].totalSeats);
+        if (parsed != 6) {
+            printf("Warning: Could not parse bus info: %s\n", line);
+            continue;
+        }
+        count++;
+    }
+
+    fclose(scanner_busesFile);
+    return true;
+}
 

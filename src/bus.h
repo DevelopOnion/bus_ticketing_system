@@ -16,14 +16,14 @@ typedef struct Bus {
     char destination[MAX_LOCATION_LEN];
     char departureTime[MAX_DEPARTURE_TIME_LEN];
     int totalSeats;
+    int availableSeats;
 } Bus;
 
 bool Bus_addBus();
 bool Bus_editBus();  
 bool Bus_deleteBus();
 void Bus_viewBuses();
-
-int Bus_loadBuses(Bus buses[], int max);
-int Bus_saveAllBuses(Bus buses[], int count);
+bool Bus_loadBuses(Bus buses[], int max);
+bool Bus_saveAllBuses(Bus buses[], int count);
 
 #endif

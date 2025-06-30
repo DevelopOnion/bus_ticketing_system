@@ -1,11 +1,10 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-/**
- * Description: clear all left over input buffer
- * Parameter: None
- * Return: (void)
- */
+#include <stdio.h>
+#include <stdlib.h>
+
 void Util_clearInputBuffer();
+void Util_exitProgram();
 
 #endif

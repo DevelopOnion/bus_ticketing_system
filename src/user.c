@@ -1,8 +1,10 @@
 #include "user.h"
 #include "util.h"
 #include "validation.h"
+#include "booking.h"
+#include "bus.h"
 
-bool User_register() {
+User User_register() {
     User newUser;
     do {
         printf("Character allowed (A-Z a-z) (1-9) (a space)\n");
@@ -49,9 +51,9 @@ bool User_register() {
 
     scanner_counterFile = fopen(USERS_COUNTER_FILE, "r");
     if (scanner_counterFile == NULL) {
-        printf("Error: Cannot load data\n.");
-        fclose(scanner_counterFile);
-        return false;
+        printf("Registration failed.\n");
+        newUser.userID[0] = '\0'; // Mark as invalid
+        return newUser;
     }
 
     fscanf(scanner_counterFile, "%s", previousId);
@@ -61,9 +63,9 @@ bool User_register() {
 
     scanner_counterFile = fopen(USERS_COUNTER_FILE, "w");
     if (scanner_counterFile == NULL) {
-        printf("Error: Cannot load data\n.");
-        fclose(scanner_counterFile);
-        return false;
+        printf("Registration failed.\n");
+        newUser.userID[0] = '\0'; // Mark as invalid
+        return newUser;
     }
 
     fprintf(scanner_counterFile, "%d", atoi(previousId) + 1);
@@ -73,16 +75,16 @@ bool User_register() {
     FILE *scanner_userFile = NULL;
     scanner_userFile = fopen(USERS_FILE, "a");
     if (scanner_userFile == NULL) {
-        printf("Error: Cannot load data\n.");
-        fclose(scanner_userFile);
-        return false;
+        printf("Registration failed.\n");
+        newUser.userID[0] = '\0'; // Mark as invalid
+        return newUser;
     }
 
     fprintf(scanner_userFile, "\n%s,%s,%s,%s,%s", newUser.userID, newUser.username, newUser.password, newUser.phoneNumber, "0");
     fclose(scanner_userFile);
 
     printf("New user added sucessfully.\n");
-    return true;
+    return newUser;
 }
 
 bool User_isUsernameUnique(char *username) {
@@ -133,26 +135,26 @@ bool User_isUsernameUnique(char *username) {
     return isUnique;
 }
 
-int User_login() {
-    char username[MAX_NAME_LEN];
+User User_login() {
+    User user;
     printf("Enter username: ");
-    scanf("%[^\n]c", username);
+    scanf("%[^\n]c", user.username);
     Util_clearInputBuffer();
     
-    char password[MAX_PASSWORD_LEN];
     printf("Enter password: ");
-    scanf("%[^\n]c", password);
+    scanf("%[^\n]c", user.password);
     Util_clearInputBuffer();
 
     FILE *scanner_userFile = NULL;
     scanner_userFile = fopen(USERS_FILE, "r");
     if (scanner_userFile == NULL) {
         printf("Error: Cannot load data\n.");
+        user.userID[0] = '\0';
+        printf("Login failed.\n");
         fclose(scanner_userFile);
-        return false;
+        return user;
     }
     
-
     bool foundUsername = false;
     bool isCorrectPassword = false;
     int role;
@@ -176,11 +178,11 @@ int User_login() {
             counter_column++;
             
             if (counter_column == 2) {
-                if (strcmp(token, username) == 0) {
+                if (strcmp(token, user.username) == 0) {
                     foundUsername = true;
                     
                     token = strtok(NULL, ",");
-                    if (strcmp(token, password) == 0) {
+                    if (strcmp(token, user.username) == 0) {
                         isCorrectPassword = true;
 
                         token = strtok(NULL, ",");
@@ -201,25 +203,91 @@ int User_login() {
 
     if (!foundUsername) {
         printf("Username does not exits.\n");
-        return 0;
+        printf("Login failed.\n");
+        user.userID[0] = '\0';
+        return user;
     }
     else if (!isCorrectPassword) {
         printf("Incorrect password. Please try again.\n");
-        return 0;
+        printf("Login failed.\n");
+        user.userID[0] = '\0';
+        return user;
     }
 
-    return (role == 0) ? 1 : 2;
+    printf("Login successful.\n");
+    return user;
 }
 
-void showBusSearchMenu() {
-    char origin[MAX_LOCATION_LEN];
-    char destination[MAX_LOCATION_LEN];
+void User_showUserMenu(User *currentUser) {
+    int option;
+    do {
+        printf("\nUser Menu:\n");
+        printf("1. Show Available Buses\n");
+        printf("2. Book Ticket\n");
+        printf("3. View My Bookings\n");
+        printf("4. Cancel a Booking\n");
+        printf("5. Logout\n");
+        printf("6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &option);
+        Util_clearInputBuffer();
 
-    printf("Departing from: ");
-    scanf("%[^\n]c", origin);
-    Util_clearInputBuffer();
+        switch (option) {
+            case 1:
+                User_showAvailableBuses();
+                break;
+            case 2:
+                Booking_bookTicket(currentUser);
+                break;
+            case 3:
+                Booking_viewMyBookings();
+                break;
+            case 4:
+                Booking_cancelBooking();
+                break;
+            case 5:
+                User_logout(currentUser);
+                return;
+            case 6:
+                Util_exitProgram();
+            default:
+                printf("Invalid option. Please try again.\n");
+        }
 
-    printf("Going to: ");
-    scanf("%[^\n]c", destination);
-    Util_clearInputBuffer();
+    } while (option != 5 || option != 6);
+}
+
+void User_logout(User *currentUser) {
+    printf("Logging out...\n");
+    if (currentUser) {
+        currentUser->userID[0] = '\0'; // Mark as logged out
+    }
+}
+
+void User_showAvailableBuses() {
+    printf("\n========== AVAILABLE BUSES ==========\n");
+
+    char checkDate[MAX_DATE_LEN];
+    do {
+        printf("\nValid booking date now -> one year from now\n");
+        printf("Enter the date you want to check (YYYY-MM-DD): ");
+        scanf("%[^\n]c", checkDate);
+        Util_clearInputBuffer();
+        
+        if (!Validation_isValidDate(checkDate)) {
+            printf("Invalid date.\n");
+        }
+    } while (!Validation_isValidDate(checkDate));
+
+    Bus availableBues[MAX_BUS_COUNT];
+    int count = Booking_getAvailableBuses(checkDate, availableBues);
+    
+    for (int i = 0; i < count; i++) {
+        printf("\n(%d) %s(%s)\n", i + 1, availableBues[i].name, availableBues[i].busID);
+        printf("Departure From: %s\n", availableBues[i].origin);
+        printf("Going To: %s\n", availableBues[i].destination);
+        printf("Departure Time: %s\n", availableBues[i].departureTime);
+        printf("Total Seats: %d\n", availableBues[i].totalSeats);
+        printf("Available Seats: %d\n", availableBues[i].availableSeats);
+    }
 }
