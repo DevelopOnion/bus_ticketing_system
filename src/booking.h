@@ -17,8 +17,8 @@ typedef struct Booking {
 } Booking;
 
 void Booking_bookTicket(User *currentUser);
-void Booking_viewMyBookings();
-void Booking_cancelBooking();
+void Booking_viewMyBookings(User *currentUser);
+void Booking_cancelBooking(User *currentUser);
 int Booking_getAvailableBuses(const char *date, Bus buses[]);
 void Booking_printAvailableSeats(const Bus *bus, const char *date);
 bool Booking_isSeatAvailable(const char *busID, const char *date, int seatNumber);

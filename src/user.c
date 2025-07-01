@@ -221,7 +221,7 @@ User User_login() {
 void User_showUserMenu(User *currentUser) {
     int option;
     do {
-        printf("\nUser Menu:\n");
+        printf("\n========== User Menu ==========\n");
         printf("1. Show Available Buses\n");
         printf("2. Book Ticket\n");
         printf("3. View My Bookings\n");
@@ -240,10 +240,10 @@ void User_showUserMenu(User *currentUser) {
                 Booking_bookTicket(currentUser);
                 break;
             case 3:
-                Booking_viewMyBookings();
+                Booking_viewMyBookings(currentUser);
                 break;
             case 4:
-                Booking_cancelBooking();
+                Booking_cancelBooking(currentUser);
                 break;
             case 5:
                 User_logout(currentUser);
