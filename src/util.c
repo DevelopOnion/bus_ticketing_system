@@ -8,6 +8,6 @@ void Util_clearInputBuffer() {
 }
 
 void Util_exitProgram() {
-    printf("Exiting the program...\n");
+    printf("\nExiting the program...\n");
     exit(1);
 }

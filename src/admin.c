@@ -80,10 +80,12 @@ void Admin_viewAllBookings() {
     if (!hasBookings) {
         printf("No bookings found.\n");
     }
+
+    printf("\n=========================================\n");
 }
 
 void Admin_Logout(User *currentUser) {
-    printf("Logging out...\n");
+    printf("\nLogging out...\n");
     if (currentUser) {
         currentUser->userID[0] = '\0'; // Mark as logged out
     }

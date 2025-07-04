@@ -53,7 +53,7 @@ bool Validation_isValidRoute(const char *destination, const char *origin) {
 }
 
 
-bool Validation_isValidSeats(int totalSeats) {
+bool Validation_isValidSeats(const int totalSeats) {
     return totalSeats > 0;
 }
 

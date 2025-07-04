@@ -176,45 +176,46 @@ User User_login() {
 
         while (token != NULL) {
             counter_column++;
-            
-            if (counter_column == 2) {
-                if (strcmp(token, user.username) == 0) {
+
+            if (counter_column == 1) {
+                strcpy(user.userID, token); // userID
+            }
+            else if (counter_column == 2) {
+                if (strcmp(token, user.username) == 0) { // check username
                     foundUsername = true;
-                    
-                    token = strtok(NULL, ",");
-                    if (strcmp(token, user.username) == 0) {
-                        isCorrectPassword = true;
-
-                        token = strtok(NULL, ",");
-                        token = strtok(NULL, ",");
-                        
-                        role = atoi(token);
-                    }
-
-                    break;
                 }
+            }
+            else if (counter_column == 3) {
+                if (foundUsername && strcmp(token, user.password) == 0) { // check password
+                    isCorrectPassword = true;
+                }
+            }
+            else if (counter_column == 5) {
+                role = atoi(token); // get role
             }
 
             token = strtok(NULL, ",");
+        }
+
+        if (foundUsername && isCorrectPassword) {
+            user.role = role;
+            break;
         }
     }
 
     fclose(scanner_userFile);
 
     if (!foundUsername) {
-        printf("Username does not exits.\n");
-        printf("Login failed.\n");
+        printf("\nUsername does not exits.\n");
         user.userID[0] = '\0';
         return user;
     }
     else if (!isCorrectPassword) {
-        printf("Incorrect password. Please try again.\n");
-        printf("Login failed.\n");
+        printf("\nIncorrect password. Please try again.\n");
         user.userID[0] = '\0';
         return user;
     }
 
-    printf("Login successful.\n");
     return user;
 }
 
@@ -290,4 +291,6 @@ void User_showAvailableBuses() {
         printf("Total Seats: %d\n", availableBues[i].totalSeats);
         printf("Available Seats: %d\n", availableBues[i].availableSeats);
     }
+
+    printf("\n=========================================\n");
 }

@@ -8,7 +8,7 @@
 
 bool Validation_isValidPassword(const char *password);
 bool Validation_isValidUsername(const char *username);
-bool Validation_isValidSeats(int totalSeats);
+bool Validation_isValidSeats(const int totalSeats);
 bool Validation_isValidPhonenumber(const char *phonenumber);
 bool Validation_isValidTimeFormat(const char *timeStr);
 bool Validation_isValidRoute(const char *destination, const char *origin);

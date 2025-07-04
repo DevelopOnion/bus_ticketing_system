@@ -152,6 +152,8 @@ void Booking_viewMyBookings(User *currentUser) {
     if (!found) {
         printf("No bookings found for user %s.\n", currentUser->username);
     }
+
+    printf("\n=========================================\n");
 }
 void Booking_cancelBooking(User *currentUser) {
     char bookingID[MAX_ID_LEN];
