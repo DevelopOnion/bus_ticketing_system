@@ -190,6 +190,9 @@ User User_login() {
                     isCorrectPassword = true;
                 }
             }
+            else if (counter_column == 4) {
+                strcpy(user.phoneNumber, token); // get phone number
+            }
             else if (counter_column == 5) {
                 role = atoi(token); // get role
             }

@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "bus.h"
 #include "admin.h"
 #include "user.h"
 #include "util.h"
@@ -38,7 +37,6 @@ int main(void) {
                 }
 
                 currentUser.userID[0] = '\0';
-
                 break;
             case 2:
                 currentUser = User_login();
@@ -57,7 +55,6 @@ int main(void) {
                 }
 
                 currentUser.userID[0] = '\0';
-
                 break;
             case 3:
                 User_register();
@@ -68,8 +65,6 @@ int main(void) {
                 printf("\nInvalid option. Please try again.\n");
         }
     } while (option != 4);
-
-    User_showUserMenu(&currentUser);
     
     return 0;
 }

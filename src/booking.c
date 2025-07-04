@@ -101,11 +101,21 @@ void Booking_bookTicket(User *currentUser) {
     fprintf(scanner_bookingFileCounter, "%d", lastID);
     fclose(scanner_bookingFileCounter);
 
-    strcpy(newBooking.userID, currentUser->userID);
-    strcpy(newBooking.busID, selectedBus.busID);
-    strcpy(newBooking.passengerName, currentUser->username);
-    strcpy(newBooking.contact, currentUser->phoneNumber);
-    strcpy(newBooking.departureDate, checkDate);
+    strncpy(newBooking.userID, currentUser->userID, MAX_ID_LEN);
+    newBooking.userID[MAX_ID_LEN - 1] = '\0';
+
+    strncpy(newBooking.busID, selectedBus.busID, MAX_ID_LEN);
+    newBooking.busID[MAX_ID_LEN - 1] = '\0';
+
+    strncpy(newBooking.passengerName, currentUser->username, MAX_NAME_LEN);
+    newBooking.passengerName[MAX_NAME_LEN - 1] = '\0';
+
+    strncpy(newBooking.contact, currentUser->phoneNumber, MAX_PHONENUMBER_LEN);
+    newBooking.contact[MAX_PHONENUMBER_LEN - 1] = '\0';
+
+    strncpy(newBooking.departureDate, checkDate, MAX_DATE_LEN);
+    newBooking.departureDate[MAX_DATE_LEN - 1] = '\0';
+
     fprintf(scanner_bookingFile, "\n%s,%s,%s,%d,%s,%s,%s", 
             newBooking.bookingID, newBooking.userID, newBooking.busID, newBooking.seatNumber, newBooking.passengerName, newBooking.contact, newBooking.departureDate);
     fclose(scanner_bookingFile);
@@ -166,6 +176,7 @@ void Booking_cancelBooking(User *currentUser) {
         printf("Error: Cannot open booking file.\n");
         return;
     }
+    
     FILE *tempFile = fopen("temp_bookings.csv", "w");
     if (!tempFile) {
         printf("Error: Cannot create temporary file.\n");
@@ -174,12 +185,10 @@ void Booking_cancelBooking(User *currentUser) {
     }
 
     char line[MAX_LINE_LEN];
-    int found = 0, headerWritten = 0;
+    int found = 0;
     // Copy header
-    if (fgets(line, sizeof(line), bookingFile)) {
-        fputs(line, tempFile);
-        headerWritten = 1;
-    }
+    fgets(line, sizeof(line), bookingFile);
+
     while (fgets(line, sizeof(line), bookingFile)) {
         char bID[MAX_ID_LEN], bUserID[MAX_ID_LEN];
         // Parse only bookingID and userID
@@ -198,7 +207,8 @@ void Booking_cancelBooking(User *currentUser) {
         remove(BOOKING_FILE);
         rename("temp_bookings.csv", BOOKING_FILE);
         printf("Booking %s cancelled successfully.\n", bookingID);
-    } else {
+    } 
+    else {
         remove("temp_bookings.csv");
         printf("Booking ID not found or does not belong to you.\n");
     }
@@ -211,6 +221,7 @@ int Booking_getAvailableBuses(const char *date, Bus buses[]) {
         printf("Error: Cannot open buses file\n");
         return 0;
     }
+
     char line[MAX_LINE_LEN];
     int count = 0;
 
@@ -230,14 +241,18 @@ int Booking_getAvailableBuses(const char *date, Bus buses[]) {
         FILE *scanner_bookingFile = fopen(BOOKING_FILE, "r");
         if (scanner_bookingFile != NULL) {
             char bookingLine[MAX_LINE_LEN];
-            fgets(bookingLine, sizeof(bookingLine), scanner_bookingFile); // skip header
+
+            fgets(bookingLine, sizeof(bookingLine), scanner_bookingFile);
+
             while (fgets(bookingLine, sizeof(bookingLine), scanner_bookingFile) != NULL) {
                 char bID[MAX_ID_LEN], bUserID[MAX_ID_LEN], bBusID[MAX_ID_LEN], seatNumber[MAX_SEAT_NUMBER_LEN], passengerName[MAX_NAME_LEN], contact[MAX_PHONENUMBER_LEN], bDate[MAX_DATE_LEN];
                 int parsedBooking = sscanf(bookingLine, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,\n]", bID, bUserID, bBusID, seatNumber, passengerName, contact, bDate);
+                
                 if (parsedBooking == 7 && strcmp(bBusID, busID) == 0 && strcmp(bDate, date) == 0) {
                     bookedSeats++;
                 }
             }
+
             fclose(scanner_bookingFile);
         }
         else {
@@ -249,22 +264,26 @@ int Booking_getAvailableBuses(const char *date, Bus buses[]) {
         strncpy(buses[count].name, name, MAX_NAME_LEN);
         // Split route
         char *dash = strchr(route, '-');
+
         if (dash) {
             int len = dash - route;
             strncpy(buses[count].origin, route, len);
             buses[count].origin[len] = '\0';
             strncpy(buses[count].destination, dash + 1, MAX_LOCATION_LEN - 1);
             buses[count].destination[MAX_LOCATION_LEN - 1] = '\0';
-        } else {
+        } 
+        else {
             strncpy(buses[count].origin, route, MAX_LOCATION_LEN - 1);
             buses[count].origin[MAX_LOCATION_LEN - 1] = '\0';
             buses[count].destination[0] = '\0';
         }
+
         strncpy(buses[count].departureTime, departureTime, MAX_DEPARTURE_TIME_LEN);
         buses[count].totalSeats = totalSeats;
         buses[count].availableSeats = totalSeats - bookedSeats;
         count++;
     }
+    
     fclose(scanner_busesFile);
     return count;
 }
@@ -322,14 +341,17 @@ bool Booking_isSeatAvailable(const char *busID, const char *date, int seatNumber
     while (fgets(bookingLine, sizeof(bookingLine), scanner_bookingFile) != NULL) {
         char bID[MAX_ID_LEN], bUserID[MAX_ID_LEN], bBusID[MAX_ID_LEN], seatNumberStr[MAX_SEAT_NUMBER_LEN], passengerName[MAX_NAME_LEN], contact[MAX_PHONENUMBER_LEN], bDate[MAX_DATE_LEN];
         int parsedBooking = sscanf(bookingLine, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,\n]", bID, bUserID, bBusID, seatNumberStr, passengerName, contact, bDate);
+
         if (parsedBooking == 7 && strcmp(bBusID, busID) == 0 && strcmp(bDate, date) == 0) {
             int bookedSeat = atoi(seatNumberStr);
+
             if (bookedSeat == seatNumber) {
                 fclose(scanner_bookingFile);
                 return false; // seat is already booked
             }
         }
     }
+
     fclose(scanner_bookingFile);
     return true; // seat is available
 }
