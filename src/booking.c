@@ -334,6 +334,7 @@ bool Booking_isSeatAvailable(const char *busID, const char *date, int seatNumber
         printf("Error: Cannot open booking file\n");
         return false;
     }
+
     char bookingLine[MAX_LINE_LEN];
 
     fgets(bookingLine, sizeof(bookingLine), scanner_bookingFile); // skip header

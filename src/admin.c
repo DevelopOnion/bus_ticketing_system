@@ -6,7 +6,7 @@
 void Admin_showAdminMenu(User *currentUser) {
     int option;
     do {
-        printf("\nAdmin menu:\n");
+        printf("\n========== Admin Menu ==========\n");
         printf("1. Manage buses\n");
         printf("2. View all booking\n");
         printf("3. Log out\n");
@@ -35,7 +35,33 @@ void Admin_showAdminMenu(User *currentUser) {
 }   
 
 void Admin_manageBuses() {
-    return;
+    int option;
+    do {
+        printf("\n========== Manage Buses ==========\n");
+        printf("1. Add Bus\n");
+        printf("2. Delete Bus\n");
+        printf("3. View All Buses\n");
+        printf("4. Back to Admin Menu\n");
+        printf("Enter option: ");
+        scanf("%d", &option);
+        Util_clearInputBuffer();
+
+        switch (option) {
+            case 1:
+                Bus_addBus();
+                break;
+            case 2:
+                Bus_deleteBus();
+                break;
+            case 3:
+                Bus_viewBuses();
+                break;
+            case 4:
+                return;
+            default:
+                printf("Invalid option.\n");
+        }
+    } while (option != 4);
 }
 
 void Admin_viewAllBookings() {

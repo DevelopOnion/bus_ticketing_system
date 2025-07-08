@@ -2,14 +2,14 @@
 #include "validation.h"
 #include "util.h"
 
-bool Bus_addBus() {
+void Bus_addBus() {
     Bus newBus;
     
     FILE *scanner_counterFile = fopen(BUSES_COUNTER_FILE, "r");
     if (scanner_counterFile == NULL) {
         printf("Error: Cannot load data.\n");
         fclose(scanner_counterFile);
-        return false;
+        return;
     }
 
     char previousBusID[MAX_ID_LEN];
@@ -23,7 +23,7 @@ bool Bus_addBus() {
     if (scanner_counterFile == NULL) {
         printf("Error: Cannot load data.\n");
         fclose(scanner_counterFile);
-        return false;
+        return;
     }
     fprintf(scanner_counterFile, "%d", atoi(previousBusID) + 1);
     fclose(scanner_counterFile);
@@ -31,7 +31,7 @@ bool Bus_addBus() {
     FILE *scanner_busesFile = fopen(BUSES_FILE, "a");
     if (scanner_busesFile == NULL) {
         printf("Error: Cannot load data.\n");
-        return false;
+        return;
     }
     
     printf("Enter Bus Name: ");
@@ -77,14 +77,12 @@ bool Bus_addBus() {
     char route[MAX_LOCATION_LEN * 2 + 2];
     sprintf(route, "%s-%s", newBus.origin, newBus.destination);
 
-    fprintf(scanner_busesFile, "\n%s,%s,%s,%s,%d", 
+    fprintf(scanner_busesFile, "%s,%s,%s,%s,%d\n", 
             newBus.busID, newBus.name, route, 
             newBus.departureTime, newBus.totalSeats);
 
     fclose(scanner_busesFile);
     printf("New bus added successfully.\n");
-
-    return true;
 }
 
 void Bus_viewBuses() {
@@ -129,32 +127,104 @@ void Bus_viewBuses() {
     }
 }
 
-bool Bus_loadBuses(Bus buses[], int max) {
+void Bus_deleteBus() {
+    char busID[MAX_ID_LEN];
+    printf("Enter Bus ID to delete: ");
+    scanf("%s", busID);
+    Util_clearInputBuffer();
+
     FILE *scanner_busesFile = fopen(BUSES_FILE, "r");
     if (scanner_busesFile == NULL) {
         printf("Error: Cannot load data.\n");
-        return false;
+        return;
+    }
+
+    FILE *tempFile = fopen("temp_buses.txt", "w");
+    if (tempFile == NULL) {
+        fclose(scanner_busesFile);
+        printf("Error: Cannot create temporary file.\n");
+        return;
     }
 
     char line[MAX_LINE_LEN];
-    int count = 0;
+    bool found = false;
 
     // skip heading line
     fgets(line, sizeof(line), scanner_busesFile);
+    fprintf(tempFile, "%s", line);
 
-    while (fgets(line, sizeof(line), scanner_busesFile) && count < max) {
-        int parsed = sscanf(line, "%[^,],%[^,],%[^-]-%[^,],%[^,],%d", 
-               buses[count].busID, buses[count].name, 
-               buses[count].origin, buses[count].destination, 
-               buses[count].departureTime, &buses[count].totalSeats);
-        if (parsed != 6) {
-            printf("Warning: Could not parse bus info: %s\n", line);
-            continue;
+    while (fgets(line, sizeof(line), scanner_busesFile)) {
+        char currentBusID[MAX_ID_LEN];
+        sscanf(line, "%[^,]", currentBusID);
+
+        if (strcmp(currentBusID, busID) == 0) {
+            found = true;
+            continue; // Skip this bus
         }
-        count++;
+        fprintf(tempFile, "%s", line);
     }
 
     fclose(scanner_busesFile);
-    return true;
+    fclose(tempFile);
+
+    if (!found) {
+        printf("Bus with ID %s not found.\n", busID);
+        remove("temp_buses.txt");
+        return;
+    }
+
+    remove(BUSES_FILE);
+    rename("temp_buses.txt", BUSES_FILE);
+    
+    printf("Bus with ID %s deleted successfully.\n", busID);
 }
+
+// bool Bus_loadBuses(Bus buses[], int max) {
+//     FILE *scanner_busesFile = fopen(BUSES_FILE, "r");
+//     if (scanner_busesFile == NULL) {
+//         printf("Error: Cannot load data.\n");
+//         return false;
+//     }
+
+//     char line[MAX_LINE_LEN];
+//     int count = 0;
+
+//     // skip heading line
+//     fgets(line, sizeof(line), scanner_busesFile);
+
+//     while (fgets(line, sizeof(line), scanner_busesFile) && count < max) {
+//         int parsed = sscanf(line, "%[^,],%[^,],%[^-]-%[^,],%[^,],%d", 
+//                buses[count].busID, buses[count].name, 
+//                buses[count].origin, buses[count].destination, 
+//                buses[count].departureTime, &buses[count].totalSeats);
+//         if (parsed != 6) {
+//             printf("Warning: Could not parse bus info: %s\n", line);
+//             continue;
+//         }
+//         count++;
+//     }
+
+//     fclose(scanner_busesFile);
+//     return true;
+// }
+
+// bool Bus_saveAllBuses(Bus buses[], int count) {
+//     FILE *scanner_busesFile = fopen(BUSES_FILE, "w");
+//     if (scanner_busesFile == NULL) {
+//         printf("Error: Cannot save data.\n");
+//         return false;
+//     }
+
+//     fprintf(scanner_busesFile, "BusID,Name,Origin-Destination,DepartureTime,TotalSeats\n");
+
+//     for (int i = 0; i < count; i++) {
+//         fprintf(scanner_busesFile, "%s,%s,%s-%s,%s,%d\n", 
+//                 buses[i].busID, buses[i].name, 
+//                 buses[i].origin, buses[i].destination, 
+//                 buses[i].departureTime, buses[i].totalSeats);
+//     }
+
+//     fclose(scanner_busesFile);
+//     return true;
+// }
 

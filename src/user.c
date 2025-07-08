@@ -258,7 +258,7 @@ void User_showUserMenu(User *currentUser) {
                 printf("Invalid option. Please try again.\n");
         }
 
-    } while (option != 5 || option != 6);
+    } while (option != 5);
 }
 
 void User_logout(User *currentUser) {

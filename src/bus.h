@@ -19,11 +19,8 @@ typedef struct Bus {
     int availableSeats;
 } Bus;
 
-bool Bus_addBus();
-bool Bus_editBus();  
-bool Bus_deleteBus();
+void Bus_addBus();
+void Bus_deleteBus();
 void Bus_viewBuses();
-bool Bus_loadBuses(Bus buses[], int max);
-bool Bus_saveAllBuses(Bus buses[], int count);
 
 #endif
